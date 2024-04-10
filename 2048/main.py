@@ -46,10 +46,17 @@ class Tile:
         self.y = row * RECT_HEIGHT
 
     def get_color(self):
-        pass
+        color_index = int(math.log2(self.value)) - 1
+        color = self.COLORS[color_index]
+        return color
 
     def draw(self, window):
-        pass
+        color = self.get_color()
+        pygame.draw.rect(window, color, (self.x, self.y, RECT_WIDTH, RECT_HEIGHT))
+
+        text = FONT.render(str(self.value), 1, FONT_COLOR)
+        window.blit(text, (self.x + (RECT_WIDTH / 2 - text.get_width() / 2),
+                           self.y + (RECT_HEIGHT / 2 - text.get_height() / 2)))
 
     def set_pos(self):
         pass
@@ -70,8 +77,11 @@ def draw_grid(window):
     pygame.draw.rect(window, OUTLINE_COLOR, (0, 0, WIDTH, HEIGHT), OUTLINE_THICKNESS)
 
 
-def draw(window):
+def draw(window, tiles):
     window.fill(BACKGROUND_COLOR)
+
+    for tile in tiles.values():
+        tile.draw(window)
 
     draw_grid(window)
 
@@ -82,6 +92,8 @@ def main(window):
     clock = pygame.time.Clock()
     run = True
 
+    tiles = {"00": Tile(4, 0, 0), "20": Tile(128, 2, 0)}
+
     while run:
         clock.tick(FPS)
 
@@ -90,7 +102,7 @@ def main(window):
                 run = False
                 break
 
-        draw(window)
+        draw(window, tiles)
 
     pygame.quit()
 
